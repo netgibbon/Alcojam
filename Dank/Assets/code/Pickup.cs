@@ -4,8 +4,36 @@ using UnityEngine;
 
 public class Pickup: PickupModal
 {
-    public void ApplyAffect(GameObject player)
+    bool coroutineTriggered = false;
+
+    public void ApplyAffect()
+    {
+        var sceneManagerData = GameObject.FindGameObjectWithTag("SceneManager").GetComponent<DataStore>();
+        
+        if(slug == "invert")
+        {
+            InvertTurnDirection(sceneManagerData);
+        }
+    }
+
+    private void InvertTurnDirection(DataStore scnMgr)
     {
 
+        scnMgr.TurnDirection *= -1f;
+        if (!coroutineTriggered)
+        {
+            StartCoroutine("Delay");
+        }
+        else
+        {
+            coroutineTriggered = false;
+        }
+    }
+
+    private IEnumerator Delay()
+    {
+        coroutineTriggered = true;
+        yield return new WaitForSeconds((float)duration);
+        ApplyAffect();
     }
 }
